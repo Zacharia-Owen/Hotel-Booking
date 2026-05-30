@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": 1780118586013,
+    "firstname": "john",
+    "lastname": "doe",
+    "email": "john@example.com",
+    "phone": "1234567890",
+    "checkin": "2027-01-28",
+    "checkout": "2027-02-05",
+    "roomID": 1
+  }
+]
