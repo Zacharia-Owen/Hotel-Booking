@@ -74,6 +74,10 @@ function BookingPage() {
     if (!formData.checkin) newErrors.checkin = 'Check-in date is required';
     if (!formData.checkout) newErrors.checkout = 'Check-out date is required';
 
+    if (formData.checkin && formData.checkout && formData.checkin >= formData.checkout) {
+     newErrors.checkout = 'Check-out date must be after check-in date';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -93,8 +97,9 @@ function BookingPage() {
         roomID: Number(roomId)
       });
       navigate('/confirmation', { state: { booking: response.data } });
-    } catch {
-      alert('Something went wrong. Please try again.');
+    } catch (err: any) {
+      const message = err.response?.data?.error || 'Something went wrong. Please try again.';
+      alert(message);
     } finally {
       setSubmitting(false);
     }
