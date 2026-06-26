@@ -1,60 +1,55 @@
-import { Router, Request, Response } from 'express'
-import fs from 'fs'
-import { get } from 'http';
-import path from 'path'
+import { Router, Request, Response } from 'express';
+import pool from '../db';
 
-const router = Router()
-
-const bookingsFile = path.join(__dirname, '../data/bookings.json');
-
-const getBookings = () => {
-    if (!fs.existsSync(bookingsFile)) return [];
-    const data = fs.readFileSync(bookingsFile, 'utf8');
-    return JSON.parse(data);
-}
-
-const saveBookings = (bookings: any[]) => {
-    fs.writeFileSync(bookingsFile, JSON.stringify(bookings, null, 2));
-}
+const router = Router();
 
 // GET all bookings
-router.get('/', (req: Request, res: Response) => {
-    const bookings = getBookings();
-    res.json(bookings);
-})
-
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const result = await pool.query('SELECT * FROM bookings');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
+});
 
 // POST a new booking
-router.post('/', (req: Request, res: Response) => {
-    const { firstname, lastname, email, phone, checkin, checkout, roomID } = req.body;
+router.post('/', async (req: Request, res: Response) => {
+  const { firstname, lastname, email, phone, checkin, checkout, roomID } = req.body;
 
-    if (!firstname || !lastname || !email || !phone || !checkin || !checkout || !roomID) {
-        return res.status(400).json({ error: 'All fields are required' });
+  if (!firstname || !lastname || !email || !phone || !checkin || !checkout || !roomID) {
+    res.status(400).json({ error: 'All fields are required' });
+    return;
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO bookings (room_id, firstname, lastname, email, phone, checkin, checkout)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [roomID, firstname, lastname, email, phone, checkin, checkout]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err: any) {
+    console.error(err);
+    if (err.code === '23503') {
+      res.status(400).json({ error: 'Room does not exist' });
+      return;
     }
-
-    const bookings = getBookings();
-    const newBooking = {
-        id: Date.now(),
-        firstname,
-        lastname,
-        email,
-        phone,
-        checkin,
-        checkout,
-        roomID
-    };
-
-    bookings.push(newBooking);
-    saveBookings(bookings);
-    res.status(201).json(newBooking);
-})
+    res.status(500).json({ error: 'Failed to create booking' });
+  }
+});
 
 // DELETE a booking
-router.delete('/:id', (req: Request, res: Response) => {
-    const bookings = getBookings();
-    const filtered = bookings.filter((b: any) => b.id !== Number(req.params.id));
-    saveBookings(filtered);
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    await pool.query('DELETE FROM bookings WHERE id = $1', [req.params.id]);
     res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete booking' });
+  }
 });
 
 export default router;
