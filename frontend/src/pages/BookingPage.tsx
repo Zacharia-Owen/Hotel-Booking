@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 interface Room {
   id: number;
@@ -43,7 +44,7 @@ function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/rooms`)
+    axios.get(`${API_BASE_URL}/api/rooms`)
       .then(res => {
         const found = res.data.find((r: Room) => r.id === Number(roomId));
         setRoom(found);
@@ -92,7 +93,7 @@ function BookingPage() {
 
     setSubmitting(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/bookings', {
+      const response = await axios.post(`${API_BASE_URL}/api/bookings`, {
         ...formData,
         roomID: Number(roomId)
       });

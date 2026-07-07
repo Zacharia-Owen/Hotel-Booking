@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 interface Booking {
   id: number;
@@ -17,7 +18,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchBookings = () => {
-    axios.get('http://localhost:5000/api/bookings')
+    axios.get(`${API_BASE_URL}/api/bookings`)
       .then(res => {
         setBookings(res.data);
         setLoading(false);
@@ -29,7 +30,7 @@ function AdminPage() {
   }, []);
 
   const handleDelete = (id: number) => {
-    axios.delete(`http://localhost:5000/api/bookings/${id}`)
+    axios.delete(`${API_BASE_URL}/api/bookings/${id}`)
       .then(() => fetchBookings());
   };
 
