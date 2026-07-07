@@ -2,7 +2,14 @@
 
 A full stack hotel booking platform built with React, TypeScript, and Node.js/Express. This project was built as a QA engineering learning project — the application is intentionally designed to be tested against, with `data-testid` attributes throughout and a clean REST API.
 
-This repo is mostly for learning and testing purposes along with the test suite in the `restful-booker-tests` repo. 
+## Live Demo
+
+| Service | URL |
+|---|---|
+| Frontend | https://hotel-booking-silk-omega.vercel.app |
+| Backend API | https://hotel-booker-backend.onrender.com/api/rooms |
+
+> **Note:** The backend is hosted on Render's free tier which spins down after periods of inactivity. The first request after idle may take 30-60 seconds to respond while the server wakes up. Subsequent requests will be fast. The frontend on Vercel is always available instantly.
 
 ## Project Structure
 
@@ -24,7 +31,7 @@ This project is split across two repositories:
 **Backend**
 - Node.js with TypeScript
 - Express (REST API framework)
-- JSON file storage (swappable for a database)
+- PostgreSQL (database with foreign keys and check constraints)
 - CORS enabled for local development
 
 ## Features
@@ -34,6 +41,7 @@ This project is split across two repositories:
 - Confirmation page with a unique booking ID
 - Admin panel to view and delete bookings
 - REST API with GET, POST, and DELETE endpoints
+- Three layer validation — React frontend, Express backend, PostgreSQL constraints
 
 ## Getting Started
 
@@ -41,6 +49,7 @@ This project is split across two repositories:
 
 - Node.js v18 or higher
 - npm
+- PostgreSQL
 
 ### Running the Backend
 
@@ -50,7 +59,7 @@ npm install
 npm run dev
 ```
 
-The API will start at `http://localhost:5000`
+Create a `.env` file in the `backend` folder using `.env.example` as a template. The API will start at `http://localhost:5000`.
 
 ### Running the Frontend
 
@@ -60,9 +69,7 @@ npm install
 npm run dev
 ```
 
-The app will start at `http://localhost:5173`
-
-Both servers need to be running simultaneously for the app to work.
+The app will start at `http://localhost:5173`. Both servers need to be running simultaneously.
 
 ## API Endpoints
 
@@ -100,18 +107,17 @@ The companion test suite (`restful-booker-tests`) covers:
 
 - **Tier 1 — UI Flows:** End to end booking journey using Playwright and the Page Object Model
 - **Tier 2 — API Testing:** Direct REST API tests using Playwright's request utilities
-- **Tier 3 — Edge Cases:** Form validation, invalid inputs, and UI responsiveness
+- **Tier 3 — Edge Cases:** Form validation, invalid inputs, and database constraint testing
 
 ## Known Limitations
 
-- Data is stored in a JSON file rather than a database. This is intentional for simplicity and can be swapped out without changing any routes or tests.
 - No authentication on the admin panel (planned for a future iteration)
-- No duplicate booking detection across overlapping dates (a known edge case for future tests)
+- No duplicate booking detection across overlapping dates
+- Backend hosted on Render's free tier — cold starts may cause a 30-60 second delay on first load
 
 ## Future Improvements
 
-- [ ] Swap JSON storage for a PostgreSQL or SQLite database
 - [ ] Add admin authentication with JWT
 - [ ] Add date conflict detection to prevent double bookings
 - [ ] Add Docker support for easier local setup
-- [ ] Deploy frontend and backend to a cloud provider
+- [ ] Update GitHub Actions to run tests against live deployed URLs
