@@ -51,6 +51,20 @@ This project is split across two repositories:
 - npm
 - PostgreSQL
 
+### Setting up the Database
+
+Run the seed file against your PostgreSQL database:
+
+```bash
+psql -U postgres -d hotel_booker -f seed.sql
+```
+
+Or against a remote database:
+
+```bash
+psql "your-database-url" -f seed.sql
+```
+
 ### Running the Backend
 
 ```bash
