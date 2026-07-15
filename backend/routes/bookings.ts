@@ -1,17 +1,18 @@
 import { Router, Request, Response } from 'express';
+import { authenticate } from '../middleware/authenticate';
 import pool from '../db';
 
 const router = Router();
 
 // GET all bookings
-router.get('/', async (req: Request, res: Response) => {
-    try {
-        const result = await pool.query('SELECT * FROM bookings');
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to fetch bookings' });
-    }
+router.get('/', authenticate, async (req: Request, res: Response) => {
+  try {
+    const result = await pool.query('SELECT * FROM bookings');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
 });
 
 // POST a new booking
@@ -49,14 +50,14 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // DELETE a booking
-router.delete('/:id', async (req: Request, res: Response) => {
-    try {
-        await pool.query('DELETE FROM bookings WHERE id = $1', [req.params.id]);
-        res.status(204).send();
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Failed to delete booking' });
-    }
+router.delete('/:id', authenticate, async (req: Request, res: Response) => {
+  try {
+    await pool.query('DELETE FROM bookings WHERE id = $1', [req.params.id]);
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete booking' });
+  }
 });
 
 export default router;
