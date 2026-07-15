@@ -42,6 +42,9 @@ This project is split across two repositories:
 - Admin panel to view and delete bookings
 - REST API with GET, POST, and DELETE endpoints
 - Three layer validation — React frontend, Express backend, PostgreSQL constraints
+- JWT authenticated admin panel with login/logout
+- Bcrypt password hashing
+- Protected API endpoints with Bearer token authorization
 
 ## Getting Started
 
@@ -125,7 +128,6 @@ The companion test suite (`restful-booker-tests`) covers:
 
 ## Known Limitations
 
-- No authentication on the admin panel (planned for a future iteration)
 - No duplicate booking detection across overlapping dates
 - Backend hosted on Render's free tier — cold starts may cause a 30-60 second delay on first load
 
